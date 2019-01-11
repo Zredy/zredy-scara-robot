@@ -15,24 +15,68 @@
  */
 
 public void b_min_click1(GButton source, GEvent event) { //_CODE_:b_min:474565:
-  println("button1 - GButton >> GEvent." + event + " @ " + millis());
-  sendSteps(0, -10);
+  sendSteps(0, -int(textfield1.getText()));
 } //_CODE_:b_min:474565:
 
 public void b_pl_click2(GButton source, GEvent event) { //_CODE_:b_pl:565569:
-  println("button1 - GButton >> GEvent." + event + " @ " + millis());
-  sendSteps(0, 10);
+  sendSteps(0, int(textfield1.getText()));
 } //_CODE_:b_pl:565569:
 
 public void a_min_click1(GButton source, GEvent event) { //_CODE_:a_min:790633:
-  println("button2 - GButton >> GEvent." + event + " @ " + millis());
-  sendSteps(-10, 0);
+  sendSteps(-int(textfield1.getText()), 0);
 } //_CODE_:a_min:790633:
 
 public void a_pl_click1(GButton source, GEvent event) { //_CODE_:a_pl:963429:
-  println("button3 - GButton >> GEvent." + event + " @ " + millis());
-  sendSteps(10, 0);
+  sendSteps(int(textfield1.getText()), 0);
 } //_CODE_:a_pl:963429:
+
+public void down_button_click(GImageButton source, GEvent event) { //_CODE_:down_button:336422:
+  moveCursor(0, int(textfield1.getText()));
+} //_CODE_:down_button:336422:
+
+public void down_left_button_click(GImageButton source, GEvent event) { //_CODE_:down_left_button:799548:
+  moveCursor(-int(textfield1.getText()), int(textfield1.getText()));
+} //_CODE_:down_left_button:799548:
+
+public void down_right_button_click(GImageButton source, GEvent event) { //_CODE_:down_right_button:277809:
+  moveCursor(int(textfield1.getText()), int(textfield1.getText()));
+} //_CODE_:down_right_button:277809:
+
+public void left_button_click(GImageButton source, GEvent event) { //_CODE_:left_button:650949:
+  moveCursor(-int(textfield1.getText()), 0);
+} //_CODE_:left_button:650949:
+
+public void right_button_click(GImageButton source, GEvent event) { //_CODE_:right_button:883111:
+  moveCursor(int(textfield1.getText()), 0);
+} //_CODE_:right_button:883111:
+
+public void up_button_click(GImageButton source, GEvent event) { //_CODE_:up_button:895207:
+  moveCursor(0, -int(textfield1.getText()));
+} //_CODE_:up_button:895207:
+
+public void up_left_button_click(GImageButton source, GEvent event) { //_CODE_:up_left_button:794253:
+  moveCursor(-int(textfield1.getText()), -int(textfield1.getText()));
+} //_CODE_:up_left_button:794253:
+
+public void up_right_button_click(GImageButton source, GEvent event) { //_CODE_:up_right_button:401494:
+  moveCursor(int(textfield1.getText()), -int(textfield1.getText()));
+} //_CODE_:up_right_button:401494:
+
+public void send_button_click(GButton source, GEvent event) { //_CODE_:send_button:644591:
+  sendData = true;
+} //_CODE_:send_button:644591:
+
+public void textfield1_change1(GTextField source, GEvent event) { //_CODE_:textfield1:232525:
+  
+} //_CODE_:textfield1:232525:
+
+public void dropList1_click1(GDropList source, GEvent event) { //_CODE_:dropList1:386960:
+
+} //_CODE_:dropList1:386960:
+
+public void connect_button_click(GButton source, GEvent event) { //_CODE_:connect_button:595575:
+  connect();
+} //_CODE_:connect_button:595575:
 
 
 
@@ -55,6 +99,44 @@ public void createGUI(){
   a_pl = new GButton(this, 120, 340, 35, 35);
   a_pl.setText("A+");
   a_pl.addEventHandler(this, "a_pl_click1");
+  down_button = new GImageButton(this, 85, 300, new String[] { "down-arrow.png", "down-arrow2.png", "down-arrow.png" } );
+  down_button.addEventHandler(this, "down_button_click");
+  down_left_button = new GImageButton(this, 50, 300, new String[] { "down-left-arrow.png", "down-left-arrow2.png", "down-left-arrow.png" } );
+  down_left_button.addEventHandler(this, "down_left_button_click");
+  down_right_button = new GImageButton(this, 120, 300, new String[] { "down-right-arrow.png", "down-right-arrow2.png", "down-right-arrow.png" } );
+  down_right_button.addEventHandler(this, "down_right_button_click");
+  left_button = new GImageButton(this, 50, 265, new String[] { "left-arrow.png", "left-arrow2.png", "left-arrow.png" } );
+  left_button.addEventHandler(this, "left_button_click");
+  right_button = new GImageButton(this, 120, 265, new String[] { "right-arrow.png", "right-arrow2.png", "right-arrow.png" } );
+  right_button.addEventHandler(this, "right_button_click");
+  up_button = new GImageButton(this, 85, 230, new String[] { "up-arrow.png", "up-arrow2.png", "up-arrow.png" } );
+  up_button.addEventHandler(this, "up_button_click");
+  up_left_button = new GImageButton(this, 50, 230, new String[] { "up-left-arrow.png", "up-left-arrow2.png", "up-left-arrow.png" } );
+  up_left_button.addEventHandler(this, "up_left_button_click");
+  up_right_button = new GImageButton(this, 120, 230, new String[] { "up-right-arrow.png", "up-right-arrow2.png", "up-right-arrow.png" } );
+  up_right_button.addEventHandler(this, "up_right_button_click");
+  send_button = new GButton(this, 52, 180, 100, 30);
+  send_button.setText("Send Position");
+  send_button.setTextBold();
+  send_button.setLocalColorScheme(GCScheme.GOLD_SCHEME);
+  send_button.addEventHandler(this, "send_button_click");
+  textfield1 = new GTextField(this, 50, 130, 100, 30, G4P.SCROLLBARS_NONE);
+  textfield1.setText("10");
+  textfield1.setPromptText("Cursor Move Amount");
+  textfield1.setLocalColorScheme(GCScheme.GOLD_SCHEME);
+  textfield1.setOpaque(false);
+  textfield1.addEventHandler(this, "textfield1_change1");
+  togGroup1 = new GToggleGroup();
+  togGroup2 = new GToggleGroup();
+  dropList1 = new GDropList(this, 50, 20, 90, 100, 4);
+  dropList1.setItems(loadStrings("list_386960"), 0);
+  dropList1.setLocalColorScheme(GCScheme.PURPLE_SCHEME);
+  dropList1.addEventHandler(this, "dropList1_click1");
+  connect_button = new GButton(this, 156, 20, 80, 30);
+  connect_button.setText("Connect");
+  connect_button.setTextBold();
+  connect_button.setLocalColorScheme(GCScheme.PURPLE_SCHEME);
+  connect_button.addEventHandler(this, "connect_button_click");
 }
 
 // Variable declarations 
@@ -63,3 +145,17 @@ GButton b_min;
 GButton b_pl; 
 GButton a_min; 
 GButton a_pl; 
+GImageButton down_button; 
+GImageButton down_left_button; 
+GImageButton down_right_button; 
+GImageButton left_button; 
+GImageButton right_button; 
+GImageButton up_button; 
+GImageButton up_left_button; 
+GImageButton up_right_button; 
+GButton send_button; 
+GTextField textfield1; 
+GToggleGroup togGroup1; 
+GToggleGroup togGroup2; 
+public GDropList dropList1; 
+GButton connect_button; 

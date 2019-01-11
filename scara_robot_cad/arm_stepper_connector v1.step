@@ -10,8 +10,9 @@ FILE_DESCRIPTION(
 
 FILE_NAME(
 /* name */ 
-'C:/Users/Zredy/Desktop/SCARA Arm/CAD/StepperConnector v1.step',
-/* time_stamp */ '2018-12-21T15:55:37+01:00',
+'C:/Users/Zredy/Desktop/SCARA Arm/scara_robot_cad/arm_stepper_connecto
+r v1.step',
+/* time_stamp */ '2019-01-11T10:53:48+01:00',
 /* author */ ('elderzz'),
 /* organization */ (''),
 /* preprocessor_version */ 'ST-DEVELOPER v17.2',
@@ -495,16 +496,17 @@ SOLID_ANGLE_UNIT()
 #441=PRODUCT_DEFINITION_SHAPE('',$,#444);
 #442=SHAPE_REPRESENTATION('',(#253),#434);
 #443=PRODUCT_DEFINITION_CONTEXT('part definition',#448,'design');
-#444=PRODUCT_DEFINITION('StepperConnector','StepperConnector v1',#445,#443);
+#444=PRODUCT_DEFINITION('arm_stepper_connector',
+'arm_stepper_connector v1',#445,#443);
 #445=PRODUCT_DEFINITION_FORMATION('',$,#450);
-#446=PRODUCT_RELATED_PRODUCT_CATEGORY('StepperConnector v1',
-'StepperConnector v1',(#450));
+#446=PRODUCT_RELATED_PRODUCT_CATEGORY('arm_stepper_connector v1',
+'arm_stepper_connector v1',(#450));
 #447=APPLICATION_PROTOCOL_DEFINITION('international standard',
 'automotive_design',2009,#448);
 #448=APPLICATION_CONTEXT(
 'Core Data for Automotive Mechanical Design Process');
 #449=PRODUCT_CONTEXT('part definition',#448,'mechanical');
-#450=PRODUCT('StepperConnector','StepperConnector v1',$,(#449));
+#450=PRODUCT('arm_stepper_connector','arm_stepper_connector v1',$,(#449));
 #451=PRESENTATION_STYLE_ASSIGNMENT((#452));
 #452=SURFACE_STYLE_USAGE(.BOTH.,#453);
 #453=SURFACE_SIDE_STYLE('',(#454));

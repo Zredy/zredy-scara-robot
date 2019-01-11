@@ -1,12 +1,8 @@
 import processing.serial.*;
 import g4p_controls.*;
 
-int rectXA, rectYA, rectXB, rectYB;
-int rectSize = 25;
-boolean rectOverA = false;
-boolean rectOverB = false;
-color rectHighlight;
-color rectColor;
+float cursorX, cursorY;
+float cursorSize = 2;
 PVector a, b, aE, bE;
 float len1 = 80;
 float len2 = 90;
@@ -14,25 +10,33 @@ float x, y;
 float A1, A2;
 float degStep = 0.00000000;
 int cnt = 0;
-int stepsAng1, stepsAng2;
+int stepsAng1, stepsAng2, lastStepsAng1, lastStepsAng2, stepsAng1a, stepsAng2a;
+public boolean sendData = false;
+public boolean connected = false;
+String portName;
 
 Serial port;
 
 void setup(){
+  A1 = HALF_PI;
+  A2 = PI;
+  cursorX = width/2;
+  cursorY = height/2 - len1-len2+10;
   degStep = 360/4096;
   size(720, 480, JAVA2D);
   createGUI();
   customGUI();
-  rectColor = color(0);
-  rectHighlight = color(51);
   background(255);
-  rectXA = width/5-(2*rectSize);
-  rectYA = height-rectSize*2;
-  rectXB = width/5+rectSize;
-  rectYB = height-rectSize*2;
   //IF THE APP DOESNT WORK, SET THE "0" TO ANOTHER NUMBER AND TEST AGAIN! IT DETERMINES THE SERIAL PORT ON YOUR COMPUTER
-  String portName = Serial.list()[0];
-  port = new Serial(this, portName, 115200);
+  dropList1.setItems(Serial.list(), 1);
+  /*
+  for(int i = 0;i < Serial.list().length;i++){
+    dropList1.insertItem(i, Serial.list()[i]);
+  }
+  */
+  println(Serial.list().length);
+  
+  
   a = new PVector(width/2, height/2);
   b = new PVector();
   aE = new PVector();
@@ -45,30 +49,17 @@ public void customGUI(){
 
 }
 
+public void connect(){
+  portName = Serial.list()[dropList1.getSelectedIndex()];
+  port = new Serial(this, portName, 115200);
+  connected = true;
+  println("SERIAL PORT CONNECTED");
+}
+
 void draw(){
   x = mouseX - (width/2);
   y = (height/2) - mouseY;
-  update(mouseX, mouseY);
-  
-  /*
-  if(rectOverA){
-    fill(rectHighlight);
-  } else {
-    fill(rectColor);
-  }
-  stroke(255);
-  rect(rectXA, rectYA, rectSize, rectSize);
-  if(rectOverB){
-    fill(rectHighlight);
-  } else {
-    fill(rectColor);
-  }
-  stroke(255);
-  rect(rectXB, rectYB, rectSize, rectSize);
-  if(!mousePressed){
-    port.write('0');
-  }
-  */
+  angles(cursorX - (width/2),(height/2) - cursorY);
   stroke(200);
   fill(200);
   ellipse(width/2, height/2, 2*(len1+len2+5), 2*(len1+len2+5));
@@ -77,11 +68,23 @@ void draw(){
   line(a.x, a.y, aE.x, aE.y);
   line(b.x, b.y, bE.x, bE.y);
   calculateEndpoints();
-  stroke(0);
+  stroke(0);   
   strokeWeight(4);
   line(a.x, a.y, aE.x, aE.y);
   line(b.x, b.y, bE.x, bE.y);
-  
+  stroke(0);
+  strokeWeight(2);
+  ellipse(cursorX, cursorY, cursorSize, cursorSize);
+  if(sendData == true){
+    calcSteps();
+    sendSteps(stepsAng1, stepsAng2);
+    sendData = false;
+  }
+}
+
+public void moveCursor(float xC, float yC){
+  cursorX = cursorX + xC;
+  cursorY = cursorY + yC;
 }
 
 // this part is executed, when serial-data is received
@@ -113,41 +116,13 @@ void angles(float xT, float yT){
     float D2 = cosineLaw(dist, len1, len2);
     A1 = D1+D2;
     A2 = cosineLaw(len1, len2, dist);
-    calcSteps();
-    sendSteps(stepsAng1, stepsAng2);
 }
 
 void update(int x, int y){
-   if( overRect(rectXA, rectYA, rectSize, rectSize) ){
-     rectOverA = true;
-     rectOverB = false;
-   } else if(overRect(rectXB, rectYB, rectSize, rectSize)) {
-     rectOverB = true;
-     rectOverA = false;
-   } else {
-     rectOverA = rectOverB = false;
-   }
+
 }
 
 void mousePressed() {
-  /*
-  if(rectOverA){
-    sendSteps(-1024, 0);
-  } else if(rectOverB){
-    sendSteps(1024, 0);
-  } else {
-    sendSteps(0, 0);
-  }
-  */
-  angles(x,y);
-}
-
-boolean overRect(int xT, int yT, int width, int height){
-  if(mouseX>= xT && mouseX <= xT+width && mouseY >= yT && mouseY <=yT+height){
-    return true;
-  } else {
-    return false;
-  }
 }
 
 void calculateEndpoints(){
@@ -161,35 +136,44 @@ void calculateEndpoints(){
 }
 
 void calcSteps(){
+  lastStepsAng1 = stepsAng1a;
+  lastStepsAng2 = stepsAng2a;
   float dA1 = degrees(A1);
   float dA2 = degrees(A2);
-  stepsAng1 = round(dA1 * (2048/360));
-  stepsAng2 = round(dA2 * (2048/360));
+  stepsAng1a = round(dA1 * (2048/360));
+  stepsAng2a = round(dA2 * (2048/360));
+  stepsAng1 = round(dA1 * (2048/360)) - lastStepsAng1;
+  stepsAng2 = round(dA2 * (2048/360)) - lastStepsAng2;
   println(stepsAng1, stepsAng2);
   println(dA1, dA2); 
 }
 
 public void sendSteps(int stepA, int stepB){
-  if(stepA < 0){
-    port.write('a');
-    port.write(Integer.toString(abs(stepA)));
-  } else if(stepA > 0){
-    port.write('b');
-    port.write(Integer.toString(abs(stepA)));
-  } else{
-    port.write('b');
-    port.write(Integer.toString(abs(stepA)));
+  if(connected){
+    if(stepA < 0){
+      port.write('a');
+      port.write(Integer.toString(abs(stepA)));
+    } else if(stepA > 0){
+      port.write('b');
+      port.write(Integer.toString(abs(stepA)));
+    } else{
+      port.write('b');
+      port.write(Integer.toString(abs(stepA)));
+    }
+    port.write('e');
+    if(stepB < 0){
+      port.write('c');
+      port.write(Integer.toString(abs(stepB)));
+    } else if(stepB > 0){
+      port.write('d');
+      port.write(Integer.toString(abs(stepB)));
+    } else{
+      port.write('c');
+      port.write(Integer.toString(abs(stepB)));
+    }
+    port.write('f');
+  } else {
+    println("SERIAL PORT NOT CONNECTED!");
   }
-  port.write('e');
-  if(stepB < 0){
-    port.write('c');
-    port.write(Integer.toString(abs(stepB)));
-  } else if(stepB > 0){
-    port.write('d');
-    port.write(Integer.toString(abs(stepB)));
-  } else{
-    port.write('c');
-    port.write(Integer.toString(abs(stepB)));
-  }
-  port.write('f');
+  
 }
